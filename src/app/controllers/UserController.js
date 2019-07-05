@@ -3,7 +3,7 @@ import User from '../models/User';
 
 class UserController {
   async list(req, res) {
-    const users = await User.findAll();
+    const users = await User.findAll({ attributes: ['id', 'name', 'email', 'createdAt', 'updatedAt'] });
 
     return res.json(users);
   }
