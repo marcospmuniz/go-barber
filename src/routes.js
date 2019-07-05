@@ -1,20 +1,23 @@
 import { Router } from 'express';
+import multer from 'multer';
+import multerConfig from './config/multer';
 
 import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionController';
+import FileController from './app/controllers/FileController';
 
 import authMiddleware from './app/middlewares/auth';
 
 const routes = new Router();
+const upload = multer(multerConfig);
 
 routes.get('', UserController.list);
 
 routes.post('/users', UserController.store);
 routes.post('/sessions', SessionController.store);
 
-// todas as rotas que virem abaixo desta declaração, executarão a middleware
-routes.use(authMiddleware);
+routes.put('/users', authMiddleware, UserController.update);
 
-routes.put('/users', UserController.update);
+routes.post('/files', authMiddleware, upload.single('file'), FileController.store);
 
 export default routes;
