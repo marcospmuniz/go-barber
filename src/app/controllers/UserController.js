@@ -2,8 +2,10 @@ import * as Yup from 'yup'; // para validações via schema
 import User from '../models/User';
 
 class UserController {
-  async list(req, res) {
-    const users = await User.findAll({ attributes: ['id', 'name', 'email', 'createdAt', 'updatedAt'] });
+  async index(req, res) {
+    const users = await User.findAll({
+      attributes: ['id', 'name', 'email', 'createdAt', 'updatedAt'],
+    });
 
     return res.json(users);
   }
@@ -49,13 +51,14 @@ class UserController {
   async update(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string().max(75),
-      email: Yup.string().email().max(75),
+      email: Yup.string()
+        .email()
+        .max(75),
       oldPassword: Yup.string().min(6),
       password: Yup.string()
         .min(6)
         .when('oldPassword', (oldPassword, field) => (oldPassword ? field.required() : field)),
-      confirmPassword: Yup.string()
-        .when('password', (password, field) => (password ? field.required().oneOf([Yup.ref('password')]) : field)),
+      confirmPassword: Yup.string().when('password', (password, field) => (password ? field.required().oneOf([Yup.ref('password')]) : field)),
     });
 
     if (!(await schema.isValid(req.body))) {
