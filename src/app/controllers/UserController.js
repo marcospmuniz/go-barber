@@ -1,10 +1,16 @@
 import * as Yup from 'yup'; // para validações via schema
 import User from '../models/User';
+import File from '../models/File';
 
 class UserController {
   async index(req, res) {
     const users = await User.findAll({
-      attributes: ['id', 'name', 'email', 'createdAt', 'updatedAt'],
+      attributes: ['id', 'name', 'email', 'avatar_id'],
+      include: [{
+        model: File,
+        as: 'avatar',
+        attributes: ['name', 'path', 'url'],
+      }],
     });
 
     return res.json(users);
