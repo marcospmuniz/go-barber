@@ -5,14 +5,12 @@ import File from '../models/File';
 class UserController {
   async index(req, res) {
     const users = await User.findAll({
-      attributes: ['id', 'name', 'email', 'provider', 'createdAt', 'updatedAt'],
-      include: [
-        {
-          model: File,
-          as: 'avatar',
-          attributes: ['name', 'path', 'url'],
-        },
-      ],
+      attributes: ['id', 'name', 'email', 'avatar_id'],
+      include: [{
+        model: File,
+        as: 'avatar',
+        attributes: ['name', 'path', 'url'],
+      }],
     });
 
     return res.json(users);
