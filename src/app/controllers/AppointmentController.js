@@ -65,6 +65,12 @@ class AppointmentController {
       });
     }
 
+    if (provider_id === req.userId) {
+      return res.status(401).json({
+        error: 'You can not create appointments for your self!',
+      });
+    }
+
     /**
      * Check for past dates
      */
