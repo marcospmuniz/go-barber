@@ -120,13 +120,13 @@ class AppointmentController {
     /**
      * Notify provider via email to
      */
-    const providerInfo = await User.findByPk(provider_id);
+    // const providerInfo = await User.findByPk(provider_id);
 
-    await Mail.sendMail({
-      to: `${providerInfo.name} <${providerInfo.email}>`,
-      subject: 'Novo agendamento criado',
-      text: 'Você tem um novo agendamento!',
-    });
+    // await Mail.sendMail({
+    //   to: `${providerInfo.name} <${providerInfo.email}>`,
+    //   subject: 'Novo agendamento criado',
+    //   text: 'Você tem um novo agendamento!',
+    // });
 
     return res.json(appointment);
   }
@@ -138,6 +138,11 @@ class AppointmentController {
           model: User,
           as: 'provider',
           attributes: ['name', 'email'],
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['name'],
         },
       ],
     });
@@ -169,7 +174,12 @@ class AppointmentController {
     await Mail.sendMail({
       to: `${appointment.provider.name} <${appointment.provider.email}>`,
       subject: 'Cancelamento de agendamento',
-      text: 'Você tem um novo cancelamento de agendamento!',
+      template: 'cancellation',
+      context: {
+        provider: appointment.provider.name,
+        user: appointment.user.name,
+        date: format(appointment.date, "dd 'de' MMMM', às' H:mm", { locale: pt }),
+      },
     });
 
     return res.json(appointment);
