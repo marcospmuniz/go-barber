@@ -117,6 +117,17 @@ class AppointmentController {
       user: provider_id,
     });
 
+    /**
+     * Notify provider via email to
+     */
+    const providerInfo = await User.findByPk(provider_id);
+
+    await Mail.sendMail({
+      to: `${providerInfo.name} <${providerInfo.email}>`,
+      subject: 'Novo agendamento criado',
+      text: 'Você tem um novo agendamento!',
+    });
+
     return res.json(appointment);
   }
 
